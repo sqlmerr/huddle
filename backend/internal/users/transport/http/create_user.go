@@ -1,19 +1,18 @@
 package users_transport_http
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
+	core_http_request "github.com/sqlmerr/huddle/backend/internal/core/transport/http/request"
 	core_http_response "github.com/sqlmerr/huddle/backend/internal/core/transport/http/response"
-	"go.uber.org/zap"
 )
 
 type CreateUserRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required,min=3,max=32"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type CreateUserResponse struct {
@@ -30,9 +29,8 @@ func (h *UsersHTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// ...
 
 	var request CreateUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		log.Error("decode request body", zap.Error(err))
-		responseHandler.ErrorResponse(http.StatusBadRequest, err, "decode request body")
+	if err := core_http_request.DecodeAndValidateRequest(r, &request); err != nil {
+		responseHandler.ErrorResponse(err, "failed to decode and validate HTTP request body")
 		return
 	}
 

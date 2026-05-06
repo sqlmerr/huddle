@@ -1,16 +1,25 @@
 package users_transport_http
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	core_http_server "github.com/sqlmerr/huddle/backend/internal/core/transport/http/server"
 )
 
 type UsersHTTPHandler struct {
+	usersService UsersService
 }
 
-func NewUsersHTTPHandler() *UsersHTTPHandler {
-	return &UsersHTTPHandler{}
+type UsersService interface {
+	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
+}
+
+func NewUsersHTTPHandler(usersService UsersService) *UsersHTTPHandler {
+	return &UsersHTTPHandler{
+		usersService: usersService,
+	}
 }
 
 func (h *UsersHTTPHandler) Routes() []core_http_server.Route {

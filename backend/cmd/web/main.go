@@ -27,7 +27,7 @@ func main() {
 
 	log.Debug("Starting Huddle backend!")
 
-	userTransportHTTP := users_transport_http.NewUsersHTTPHandler()
+	userTransportHTTP := users_transport_http.NewUsersHTTPHandler(nil)
 	usersRoutes := userTransportHTTP.Routes()
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersionV1)
