@@ -7,4 +7,6 @@ var (
 	ErrInternalServerError = errors.New("internal server error")
 	ErrConflict            = errors.New("conflict")
 	ErrInvalidArgument     = errors.New("invalid argument")
+	ErrUnauthorized        = errors.New("unauthorized")
+	ErrAccessDenied        = errors.New("access denied")
 )

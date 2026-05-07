@@ -26,7 +26,11 @@ func NewAPIVersionRouter(apiVersion ApiVersion) *APIVersionRouter {
 
 func (r *APIVersionRouter) AddRoutes(routes ...Route) {
 	for _, route := range routes {
+		var handler http.Handler = http.HandlerFunc(route.Handler)
+		for _, m := range route.Middleware {
+			handler = m(handler)
+		}
 		pattern := fmt.Sprintf("%s %s", route.Method, route.Path)
-		r.Handle(pattern, route.Handler)
+		r.Handle(pattern, handler)
 	}
 }

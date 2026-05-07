@@ -1,13 +1,15 @@
-package users_postgres_repository
+package auth_postgres_repository
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
+	"github.com/sqlmerr/huddle/backend/internal/core/logger"
+	"go.uber.org/zap"
 )
 
-func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
+func (r *AuthRepository) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -24,6 +26,8 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 		&userModel.Password,
 		&userModel.CreatedAt,
 	)
+	log := logger.FromContext(ctx)
+	log.Info("created at", zap.Time("time", userModel.CreatedAt))
 	if err != nil {
 		return domain.User{}, fmt.Errorf("scan error: %w", err)
 	}
