@@ -30,12 +30,19 @@ func (h *HTTPResponseHandler) PanicResponse(p any, msg string) {
 	h.ErrorResponse(err, msg)
 }
 
+func (h *HTTPResponseHandler) NoContentResponse() {
+	h.w.WriteHeader(http.StatusNoContent)
+}
+
 func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 	var (
 		statusCode int
 		logFunc    func(string, ...zap.Field)
 	)
 	switch {
+	case errors.Is(err, core_errors.ErrInternalServerError):
+		statusCode = http.StatusInternalServerError
+		logFunc = h.log.Error
 	case errors.Is(err, core_errors.ErrInvalidArgument):
 		statusCode = http.StatusBadRequest
 		logFunc = h.log.Warn
@@ -45,12 +52,24 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 	case errors.Is(err, core_errors.ErrConflict):
 		statusCode = http.StatusConflict
 		logFunc = h.log.Warn
+	case errors.Is(err, core_errors.ErrUnauthorized):
+		statusCode = http.StatusUnauthorized
+		logFunc = h.log.Warn
+	case errors.Is(err, core_errors.ErrAccessDenied):
+		statusCode = http.StatusForbidden
+		logFunc = h.log.Warn
+	case errors.Is(err, core_errors.ErrUnprocessableEntity):
+		statusCode = http.StatusUnprocessableEntity
+		logFunc = h.log.Warn
 	default:
 		statusCode = http.StatusInternalServerError
 		logFunc = h.log.Error
 	}
 
 	logFunc(msg, zap.Error(err))
+	if statusCode == http.StatusInternalServerError {
+		err = core_errors.ErrInternalServerError
+	}
 	response := map[string]string{
 		"message": msg,
 		"error":   err.Error(),
@@ -59,7 +78,9 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 }
 
 func (h *HTTPResponseHandler) JSONResponse(statusCode int, data any) {
+	h.w.Header().Set("Content-Type", "application/json")
 	h.w.WriteHeader(statusCode)
+
 	if err := json.NewEncoder(h.w).Encode(data); err != nil {
 		h.log.Error("write HTTP Response", zap.Error(err))
 	}

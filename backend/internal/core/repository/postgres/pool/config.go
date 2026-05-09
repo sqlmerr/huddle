@@ -22,3 +22,11 @@ func LoadConfig() (*Config, error) {
 	}
 	return &c, nil
 }
+
+func LoadConfigMust() *Config {
+	c, err := LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	return c
+}

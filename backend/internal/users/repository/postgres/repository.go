@@ -1,11 +1,21 @@
 package users_postgres_repository
 
-import core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
+import (
+	"context"
 
-type UsersRepository struct {
+	"github.com/google/uuid"
+	"github.com/sqlmerr/huddle/backend/internal/core/domain"
+	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
+)
+
+type UsersRepositoryImpl struct {
 	pool core_postgres_pool.Pool
 }
 
-func NewUsersRepository(pool core_postgres_pool.Pool) *UsersRepository {
-	return &UsersRepository{pool: pool}
+type UserRepository interface {
+	GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error)
+}
+
+func NewUsersRepository(pool core_postgres_pool.Pool) *UsersRepositoryImpl {
+	return &UsersRepositoryImpl{pool: pool}
 }

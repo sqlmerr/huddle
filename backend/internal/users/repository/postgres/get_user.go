@@ -4,17 +4,20 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 )
 
-func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
+func (r *UsersRepositoryImpl) GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
 	query := `
-	INSERT INTO users (username, email, password) VALUES ($1, $2, $3)
-	RETURNING id, username, email, password, created_at;`
-	row := r.pool.QueryRow(ctx, query, user.Username, user.Email, user.Password)
+	SELECT id, username, email, password, created_at
+	FROM users
+	WHERE id = $1
+	`
+	row := r.pool.QueryRow(ctx, query, userID)
 
 	var userModel UserModel
 	err := row.Scan(
