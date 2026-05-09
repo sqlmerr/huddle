@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
+	core_http_response "github.com/sqlmerr/huddle/backend/internal/core/transport/http/response"
 	"go.uber.org/zap"
 )
 
@@ -15,11 +16,21 @@ func Trace() Middleware {
 			log := logger.FromContext(ctx)
 
 			before := time.Now()
-			log.Debug(">>> incoming HTTP request", zap.Time("time", time.Now().UTC()))
+			log.Debug(
+				">>> incoming HTTP request",
+				zap.Time("time", time.Now().UTC()),
+				zap.String("http_method", r.Method),
+			)
 
-			h.ServeHTTP(w, r)
+			rw := core_http_response.NewResponseWriter(w)
 
-			log.Debug("<<< done HTTP request", zap.Duration("latency", time.Since(before)))
+			h.ServeHTTP(rw, r)
+
+			log.Debug(
+				"<<< done HTTP request",
+				zap.Duration("latency", time.Since(before)),
+				zap.Int("status_code", rw.GetStatusCodeOrPanic()),
+			)
 		})
 	}
 }

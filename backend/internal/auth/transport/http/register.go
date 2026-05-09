@@ -10,6 +10,7 @@ import (
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
 	core_http_request "github.com/sqlmerr/huddle/backend/internal/core/transport/http/request"
 	core_http_response "github.com/sqlmerr/huddle/backend/internal/core/transport/http/response"
+	"go.uber.org/zap"
 )
 
 type CreateUserRequest struct {
@@ -43,6 +44,7 @@ func (h *AuthHTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug("registered new user", zap.String("user_id", user.ID.String()))
 	responseHandler.JSONResponse(http.StatusCreated, CreateUserResponse{
 		ID:       user.ID,
 		Username: user.Username,

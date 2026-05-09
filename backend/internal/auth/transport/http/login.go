@@ -52,6 +52,7 @@ func (h *AuthHTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debug("user successfully logged in")
 	response := LoginResponse{AccessToken: token.AccessToken, TokenType: "Bearer"}
 	responseHandler.JSONResponse(http.StatusOK, response)
 }

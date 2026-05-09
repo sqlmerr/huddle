@@ -7,7 +7,8 @@ import (
 )
 
 type Config struct {
-	Level string `required:"true"`
+	Level  string `default:"DEBUG"`
+	Folder string `required:"true"`
 }
 
 func NewConfig() (Config, error) {

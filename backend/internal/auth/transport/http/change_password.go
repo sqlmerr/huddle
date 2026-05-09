@@ -8,6 +8,7 @@ import (
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
 	core_http_request "github.com/sqlmerr/huddle/backend/internal/core/transport/http/request"
 	core_http_response "github.com/sqlmerr/huddle/backend/internal/core/transport/http/response"
+	"go.uber.org/zap"
 )
 
 type ChangePasswordRequest struct {
@@ -28,12 +29,20 @@ func (h *AuthHTTPHandler) ChangePassword(w http.ResponseWriter, r *http.Request)
 
 	userID := core_auth.GetUserIDFromContext(ctx)
 
-	input := auth_service.ChangePasswordInput{UserID: userID, OldPassword: request.OldPassword, NewPassword: request.NewPassword}
+	input := auth_service.ChangePasswordInput{
+		UserID:      userID,
+		OldPassword: request.OldPassword,
+		NewPassword: request.NewPassword,
+	}
 	err := h.authService.ChangePassword(ctx, input)
 	if err != nil {
 		responseHandler.ErrorResponse(err, "failed to change user's password")
 		return
 	}
 
+	log.Debug(
+		"changed password for user",
+		zap.String("user_id", userID.String()),
+	)
 	responseHandler.NoContentResponse()
 }
