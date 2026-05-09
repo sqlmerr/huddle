@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	auth_service "github.com/sqlmerr/huddle/backend/internal/auth/service"
 	core_auth "github.com/sqlmerr/huddle/backend/internal/core/auth"
 	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
@@ -41,9 +42,9 @@ func (h *AuthHTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var token core_auth.Token
 	var err error
 	if request.Username != nil {
-		token, err = h.authService.LoginByUsername(ctx, *request.Username, request.Password)
+		token, err = h.authService.LoginByUsername(ctx, auth_service.LoginByUsernameInput{Username: *request.Username, Password: request.Password})
 	} else {
-		token, err = h.authService.LoginByEmail(ctx, *request.Email, request.Password)
+		token, err = h.authService.LoginByEmail(ctx, auth_service.LoginByEmailInput{Email: *request.Email, Password: request.Password})
 	}
 
 	if err != nil {

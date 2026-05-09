@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (r *AuthRepository) UserExistsByUsername(
+func (r *AuthRepositoryImpl) UserExistsByUsername(
 	ctx context.Context,
 	username string,
 ) (bool, error) {
@@ -26,7 +26,7 @@ func (r *AuthRepository) UserExistsByUsername(
 	return exists, nil
 }
 
-func (r *AuthRepository) UserExistsByEmail(
+func (r *AuthRepositoryImpl) UserExistsByEmail(
 	ctx context.Context,
 	email string,
 ) (bool, error) {

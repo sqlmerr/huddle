@@ -4,20 +4,14 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	auth_postgres_repository "github.com/sqlmerr/huddle/backend/internal/auth/repository/postgres"
+	core_auth "github.com/sqlmerr/huddle/backend/internal/core/auth"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 )
 
-type AuthService struct {
-	repo         AuthRepository
+type AuthServiceImpl struct {
+	repo         auth_postgres_repository.AuthRepository
 	jwtProcessor JWTProcessor
-}
-
-type AuthRepository interface {
-	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
-	GetUserByUsername(ctx context.Context, username string) (domain.User, error)
-	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
-	UserExistsByUsername(ctx context.Context, username string) (bool, error)
-	UserExistsByEmail(ctx context.Context, email string) (bool, error)
 }
 
 type JWTProcessor interface {
@@ -25,6 +19,12 @@ type JWTProcessor interface {
 	ValidateToken(tokenString string) (uuid.UUID, error)
 }
 
-func NewAuthService(repo AuthRepository, jwtProcessor JWTProcessor) *AuthService {
-	return &AuthService{repo: repo, jwtProcessor: jwtProcessor}
+type AuthService interface {
+	Register(ctx context.Context, input RegisterInput) (domain.User, error)
+	LoginByUsername(ctx context.Context, input LoginByUsernameInput) (core_auth.Token, error)
+	LoginByEmail(ctx context.Context, input LoginByEmailInput) (core_auth.Token, error)
+}
+
+func NewAuthService(repo auth_postgres_repository.AuthRepository, jwtProcessor JWTProcessor) *AuthServiceImpl {
+	return &AuthServiceImpl{repo: repo, jwtProcessor: jwtProcessor}
 }

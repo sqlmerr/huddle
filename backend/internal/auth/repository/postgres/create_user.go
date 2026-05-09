@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *AuthRepository) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
+func (r *AuthRepositoryImpl) CreateUser(ctx context.Context, user domain.User) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

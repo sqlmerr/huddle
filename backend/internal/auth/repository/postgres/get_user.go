@@ -11,7 +11,7 @@ import (
 	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
 )
 
-func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string) (domain.User, error) {
+func (r *AuthRepositoryImpl) GetUserByUsername(ctx context.Context, username string) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -41,7 +41,7 @@ func (r *AuthRepository) GetUserByUsername(ctx context.Context, username string)
 	return userDomain, nil
 }
 
-func (r *AuthRepository) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
+func (r *AuthRepositoryImpl) GetUserByEmail(ctx context.Context, email string) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

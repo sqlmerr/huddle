@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sqlmerr/huddle/backend/internal/core/domain"
+	auth_service "github.com/sqlmerr/huddle/backend/internal/auth/service"
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
 	core_http_request "github.com/sqlmerr/huddle/backend/internal/core/transport/http/request"
 	core_http_response "github.com/sqlmerr/huddle/backend/internal/core/transport/http/response"
@@ -36,8 +36,8 @@ func (h *AuthHTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDomain := domainFromDTO(request)
-	user, err := h.authService.Register(ctx, userDomain)
+	input := serviceDTOFromDTO(request)
+	user, err := h.authService.Register(ctx, input)
 	if err != nil {
 		responseHandler.ErrorResponse(fmt.Errorf("create user: %w", err), "failed to create user")
 		return
@@ -50,6 +50,10 @@ func (h *AuthHTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func domainFromDTO(request CreateUserRequest) domain.User {
-	return domain.NewUserUninitialized(request.Username, request.Email, request.Password)
+func serviceDTOFromDTO(request CreateUserRequest) auth_service.RegisterInput {
+	return auth_service.RegisterInput{
+		Username: request.Username,
+		Email:    request.Email,
+		Password: request.Password,
+	}
 }

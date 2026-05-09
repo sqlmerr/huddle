@@ -1,24 +1,15 @@
 package auth_transport_http
 
 import (
-	"context"
-
-	core_auth "github.com/sqlmerr/huddle/backend/internal/core/auth"
-	"github.com/sqlmerr/huddle/backend/internal/core/domain"
+	auth_service "github.com/sqlmerr/huddle/backend/internal/auth/service"
 	core_http_server "github.com/sqlmerr/huddle/backend/internal/core/transport/http/server"
 )
 
 type AuthHTTPHandler struct {
-	authService AuthService
+	authService auth_service.AuthService
 }
 
-type AuthService interface {
-	Register(ctx context.Context, user domain.User) (domain.User, error)
-	LoginByUsername(ctx context.Context, username, password string) (core_auth.Token, error)
-	LoginByEmail(ctx context.Context, email, password string) (core_auth.Token, error)
-}
-
-func NewAuthHTTPHandler(authService AuthService) *AuthHTTPHandler {
+func NewAuthHTTPHandler(authService auth_service.AuthService) *AuthHTTPHandler {
 	return &AuthHTTPHandler{
 		authService: authService,
 	}

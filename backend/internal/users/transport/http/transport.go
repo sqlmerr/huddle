@@ -1,25 +1,19 @@
 package users_transport_http
 
 import (
-	"context"
 	"net/http"
 
-	"github.com/google/uuid"
-	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	core_http_middleware "github.com/sqlmerr/huddle/backend/internal/core/transport/http/middleware"
 	core_http_server "github.com/sqlmerr/huddle/backend/internal/core/transport/http/server"
+	users_service "github.com/sqlmerr/huddle/backend/internal/users/service"
 )
 
 type UsersHTTPHandler struct {
-	usersService   UsersService
+	usersService   users_service.UsersService
 	authMiddleware core_http_middleware.Middleware
 }
 
-type UsersService interface {
-	GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error)
-}
-
-func NewUsersHTTPHandler(usersService UsersService, authMiddleware core_http_middleware.Middleware) *UsersHTTPHandler {
+func NewUsersHTTPHandler(usersService users_service.UsersService, authMiddleware core_http_middleware.Middleware) *UsersHTTPHandler {
 	return &UsersHTTPHandler{
 		usersService:   usersService,
 		authMiddleware: authMiddleware,
