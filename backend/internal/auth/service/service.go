@@ -23,6 +23,7 @@ type AuthService interface {
 	Register(ctx context.Context, input RegisterInput) (domain.User, error)
 	LoginByUsername(ctx context.Context, input LoginByUsernameInput) (core_auth.Token, error)
 	LoginByEmail(ctx context.Context, input LoginByEmailInput) (core_auth.Token, error)
+	ChangePassword(ctx context.Context, input ChangePasswordInput) error
 }
 
 func NewAuthService(repo auth_postgres_repository.AuthRepository, jwtProcessor JWTProcessor) *AuthServiceImpl {

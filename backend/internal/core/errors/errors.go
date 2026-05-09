@@ -9,4 +9,5 @@ var (
 	ErrInvalidArgument     = errors.New("invalid argument")
 	ErrUnauthorized        = errors.New("unauthorized")
 	ErrAccessDenied        = errors.New("access denied")
+	ErrUnprocessableEntity = errors.New("unprocessable entity")
 )

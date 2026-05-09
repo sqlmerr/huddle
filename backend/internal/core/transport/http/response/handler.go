@@ -30,12 +30,19 @@ func (h *HTTPResponseHandler) PanicResponse(p any, msg string) {
 	h.ErrorResponse(err, msg)
 }
 
+func (h *HTTPResponseHandler) NoContentResponse() {
+	h.w.WriteHeader(http.StatusNoContent)
+}
+
 func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 	var (
 		statusCode int
 		logFunc    func(string, ...zap.Field)
 	)
 	switch {
+	case errors.Is(err, core_errors.ErrInternalServerError):
+		statusCode = http.StatusInternalServerError
+		logFunc = h.log.Error
 	case errors.Is(err, core_errors.ErrInvalidArgument):
 		statusCode = http.StatusBadRequest
 		logFunc = h.log.Warn
@@ -50,6 +57,9 @@ func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 		logFunc = h.log.Warn
 	case errors.Is(err, core_errors.ErrAccessDenied):
 		statusCode = http.StatusForbidden
+		logFunc = h.log.Warn
+	case errors.Is(err, core_errors.ErrUnprocessableEntity):
+		statusCode = http.StatusUnprocessableEntity
 		logFunc = h.log.Warn
 	default:
 		statusCode = http.StatusInternalServerError

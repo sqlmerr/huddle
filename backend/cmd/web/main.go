@@ -53,7 +53,7 @@ func main() {
 
 	authRepository := auth_postgres_repository.NewAuthRepository(pool)
 	authService := auth_service.NewAuthService(authRepository, jwtProcessor)
-	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService)
+	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService, authMiddleware)
 	apiVersionRouter.AddRoutes(authTransportHTTP.Routes()...)
 
 	httpServer := core_http_server.NewHttpServer(
