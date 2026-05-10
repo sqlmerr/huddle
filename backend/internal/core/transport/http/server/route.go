@@ -21,3 +21,8 @@ func NewRoute(method, path string, handler http.HandlerFunc, middleware ...core_
 		Middleware: middleware,
 	}
 }
+
+func (r *Route) WithMiddleware() http.Handler {
+	handler := core_http_middleware.ChainMiddleware(r.Handler, r.Middleware...)
+	return handler
+}
