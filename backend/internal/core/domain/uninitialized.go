@@ -7,6 +7,7 @@ import (
 )
 
 var (
-	UninitializedID   uuid.UUID
-	UninitializedTime time.Time
+	UninitializedID         uuid.UUID
+	UninitializedTime       time.Time
+	UninitializedIsArchived bool
 )

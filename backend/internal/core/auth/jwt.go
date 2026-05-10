@@ -37,7 +37,7 @@ func (m *JWTProcessor) ValidateToken(tokenString string) (uuid.UUID, error) {
 		return []byte(m.config.JWTSecret), nil
 	})
 	if err != nil {
-		return uuid.Nil, fmt.Errorf("validate jwt token: %w", err)
+		return uuid.Nil, fmt.Errorf("validate jwt token: %w: %w", core_errors.ErrUnauthorized, err)
 	}
 
 	errInvalidJwtToken := fmt.Errorf("invalid jwt token: %w", core_errors.ErrUnauthorized)

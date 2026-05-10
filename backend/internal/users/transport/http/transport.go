@@ -8,19 +8,19 @@ import (
 	users_service "github.com/sqlmerr/huddle/backend/internal/users/service"
 )
 
-type UsersHTTPHandler struct {
-	usersService   users_service.UsersService
+type UserHTTPHandler struct {
+	usersService   users_service.UserService
 	authMiddleware core_http_middleware.Middleware
 }
 
-func NewUsersHTTPHandler(usersService users_service.UsersService, authMiddleware core_http_middleware.Middleware) *UsersHTTPHandler {
-	return &UsersHTTPHandler{
+func NewUserHTTPHandler(usersService users_service.UserService, authMiddleware core_http_middleware.Middleware) *UserHTTPHandler {
+	return &UserHTTPHandler{
 		usersService:   usersService,
 		authMiddleware: authMiddleware,
 	}
 }
 
-func (h *UsersHTTPHandler) Routes() []core_http_server.Route {
+func (h *UserHTTPHandler) Routes() []core_http_server.Route {
 	return []core_http_server.Route{
 		{
 			Method:     http.MethodGet,

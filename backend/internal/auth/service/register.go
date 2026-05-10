@@ -10,8 +10,15 @@ import (
 )
 
 func (s *AuthServiceImpl) Register(ctx context.Context, input RegisterInput) (domain.User, error) {
-	if err := input.Validate(); err != nil {
-		return domain.User{}, fmt.Errorf("validate input: %w", err)
+	hashedPassword, err := core_auth.HashPassword(input.Password)
+	if err != nil {
+		return domain.User{}, fmt.Errorf("hash password: %w", err)
+	}
+
+	userDomain := domain.NewUserUninitialized(input.Username, input.Email, hashedPassword)
+
+	if err := userDomain.Validate(); err != nil {
+		return domain.User{}, fmt.Errorf("validate user: %w", err)
 	}
 
 	existsByUsername, err := s.repo.UserExistsByUsername(ctx, input.Username)
@@ -30,13 +37,6 @@ func (s *AuthServiceImpl) Register(ctx context.Context, input RegisterInput) (do
 		return domain.User{}, fmt.Errorf("email '%s' already occupied: %w", input.Email, core_errors.ErrConflict)
 	}
 
-	hashedPassword, err := core_auth.HashPassword(input.Password)
-	if err != nil {
-		return domain.User{}, fmt.Errorf("hash password: %w", err)
-	}
-	input.Password = hashedPassword
-
-	userDomain := domain.NewUserUninitialized(input.Username, input.Email, input.Password)
 	user, err := s.repo.CreateUser(ctx, userDomain)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("register user: %w", err)
