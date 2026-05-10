@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
+	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 )
 
 func (r *SpaceRepositoryImpl) SaveSpace(ctx context.Context, space domain.Space) (domain.Space, error) {
@@ -36,7 +36,7 @@ func (r *SpaceRepositoryImpl) SaveSpace(ctx context.Context, space domain.Space)
 	)
 
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.Space{}, fmt.Errorf("space with id %s: %w", space.ID.String(), core_errors.ErrNotFound)
 		}
 		return domain.Space{}, fmt.Errorf("scan error: %w", err)

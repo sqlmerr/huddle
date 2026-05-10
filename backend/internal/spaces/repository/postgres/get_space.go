@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
+	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 )
 
 func (r *SpaceRepositoryImpl) GetSpace(ctx context.Context, spaceID uuid.UUID) (domain.Space, error) {
@@ -33,7 +33,7 @@ func (r *SpaceRepositoryImpl) GetSpace(ctx context.Context, spaceID uuid.UUID) (
 	)
 
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.Space{}, fmt.Errorf("space with id='%s': %w", spaceID, core_errors.ErrNotFound)
 		}
 		return domain.Space{}, fmt.Errorf("scan error: %w", err)

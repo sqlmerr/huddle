@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
+	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 )
 
 func (r *AuthRepositoryImpl) GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error) {
@@ -59,7 +59,7 @@ func (r *AuthRepositoryImpl) GetUserByUsername(ctx context.Context, username str
 		&userModel.CreatedAt,
 	)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.User{}, fmt.Errorf("user with username '%s': %w", username, core_errors.ErrNotFound)
 		}
 		return domain.User{}, fmt.Errorf("scan error: %w", err)
@@ -89,7 +89,7 @@ func (r *AuthRepositoryImpl) GetUserByEmail(ctx context.Context, email string) (
 		&userModel.CreatedAt,
 	)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.User{}, fmt.Errorf("user with email '%s': %w", email, core_errors.ErrNotFound)
 		}
 		return domain.User{}, fmt.Errorf("scan error: %w", err)
