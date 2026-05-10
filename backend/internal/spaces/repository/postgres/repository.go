@@ -11,10 +11,9 @@ import (
 type SpaceRepository interface {
 	CreateSpace(ctx context.Context, space domain.Space) (domain.Space, error)
 	GetSpace(ctx context.Context, spaceID uuid.UUID) (domain.Space, error)
-	GetSpacesByOwnerID(ctx context.Context, ownerID uuid.UUID) ([]domain.Space, error)
+	GetSpacesByOwnerID(ctx context.Context, ownerID uuid.UUID, filter GetSpacesByOwnerIDFilter) ([]domain.Space, error)
 	SaveSpace(ctx context.Context, space domain.Space) (domain.Space, error)
 
-	// TODO: archive space
 	// TODO: count spaces by owner id
 }
 

@@ -13,7 +13,7 @@ func (r *SpaceRepositoryImpl) CreateSpace(ctx context.Context, space domain.Spac
 
 	query := `
 	INSERT INTO spaces (title, description, owner_id) VALUES ($1, $2, $3)
-	RETURNING id, title, description, owner_id, created_at;
+	RETURNING id, title, description, owner_id, created_at, is_archived;
 	`
 	row := r.pool.QueryRow(ctx, query, space.Title, space.Description, space.OwnerID)
 
@@ -24,6 +24,7 @@ func (r *SpaceRepositoryImpl) CreateSpace(ctx context.Context, space domain.Spac
 		&spaceModel.Description,
 		&spaceModel.OwnerID,
 		&spaceModel.CreatedAt,
+		&spaceModel.IsArchived,
 	)
 
 	if err != nil {

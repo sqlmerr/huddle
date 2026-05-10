@@ -46,5 +46,11 @@ func (h *SpaceHTTPHandler) Routes() []core_http_server.Route {
 			Handler:    h.PatchSpace,
 			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
 		},
+		{
+			Method:     http.MethodGet,
+			Path:       "/spaces/my/archived",
+			Handler:    h.GetMyArchivedSpaces,
+			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
+		},
 	}
 }

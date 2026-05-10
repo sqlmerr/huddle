@@ -15,7 +15,8 @@ type Space struct {
 
 	OwnerID uuid.UUID
 
-	CreatedAt time.Time
+	CreatedAt  time.Time
+	IsArchived bool
 }
 
 func NewSpace(
@@ -24,6 +25,7 @@ func NewSpace(
 	description *string,
 	ownerID uuid.UUID,
 	createdAt time.Time,
+	isArchived bool,
 ) Space {
 	return Space{
 		ID:          id,
@@ -31,6 +33,7 @@ func NewSpace(
 		Description: description,
 		OwnerID:     ownerID,
 		CreatedAt:   createdAt,
+		IsArchived:  isArchived,
 	}
 }
 
@@ -41,6 +44,7 @@ func NewSpaceUninitialized(title string, description *string, ownerID uuid.UUID)
 		Description: description,
 		OwnerID:     ownerID,
 		CreatedAt:   UninitializedTime,
+		IsArchived:  UninitializedIsArchived,
 	}
 }
 

@@ -26,3 +26,18 @@ func (h *SpaceHTTPHandler) GetMySpaces(w http.ResponseWriter, r *http.Request) {
 	response := GetMySpacesResponse{spaceDTOResponsesFromDomains(spaces)}
 	responseHandler.JSONResponse(http.StatusOK, response)
 }
+
+func (h *SpaceHTTPHandler) GetMyArchivedSpaces(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	log := logger.FromContext(ctx)
+	responseHandler := core_http_response.NewHTTPResponseHandler(log, w)
+
+	userID := core_auth.GetUserIDFromContext(ctx)
+	spaces, err := h.spaceService.GetArchivedUserSpaces(ctx, userID)
+	if err != nil {
+		responseHandler.ErrorResponse(err, "failed to get user's archived spaces")
+		return
+	}
+	response := GetMySpacesResponse{spaceDTOResponsesFromDomains(spaces)}
+	responseHandler.JSONResponse(http.StatusOK, response)
+}

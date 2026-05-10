@@ -13,6 +13,7 @@ type SpaceDTOResponse struct {
 	Description *string   `json:"description"`
 	OwnerID     uuid.UUID `json:"owner_id"`
 	CreatedAt   time.Time `json:"created_at"`
+	IsArchived  bool      `json:"is_archived"`
 }
 
 func spaceDTOResponseFromDomain(spaceDomain domain.Space) SpaceDTOResponse {
@@ -22,6 +23,7 @@ func spaceDTOResponseFromDomain(spaceDomain domain.Space) SpaceDTOResponse {
 		Description: spaceDomain.Description,
 		OwnerID:     spaceDomain.OwnerID,
 		CreatedAt:   spaceDomain.CreatedAt,
+		IsArchived:  spaceDomain.IsArchived,
 	}
 }
 

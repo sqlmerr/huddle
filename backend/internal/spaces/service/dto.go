@@ -19,11 +19,16 @@ type PatchSpaceInput struct {
 	SpaceID     uuid.UUID
 	Title       domain.Nullable[string]
 	Description domain.Nullable[string]
+	IsArchived  domain.Nullable[bool]
 }
 
 func (i *PatchSpaceInput) Validate() error {
 	if i.Title.Set && i.Title.Value == nil {
 		return fmt.Errorf("`Title` can't be null: %w", core_errors.ErrInvalidArgument)
+	}
+
+	if i.IsArchived.Set && i.IsArchived.Value == nil {
+		return fmt.Errorf("`IsArchived` can't be null: %w", core_errors.ErrInvalidArgument)
 	}
 
 	return nil
@@ -40,6 +45,9 @@ func (i *PatchSpaceInput) ApplyPatch(d domain.Space) (domain.Space, error) {
 	}
 	if i.Description.Set {
 		tmp.Description = i.Description.Value
+	}
+	if i.IsArchived.Set {
+		tmp.IsArchived = *i.IsArchived.Value
 	}
 
 	if err := tmp.Validate(); err != nil {

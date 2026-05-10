@@ -16,6 +16,7 @@ import (
 type PatchSpaceRequest struct {
 	Title       core_http_types.Nullable[string] `json:"title"`
 	Description core_http_types.Nullable[string] `json:"description"`
+	IsArchived  core_http_types.Nullable[bool]   `json:"is_archived"`
 }
 
 type PatchSpaceResponse SpaceDTOResponse
@@ -36,6 +37,10 @@ func (r *PatchSpaceRequest) Validate() error {
 		if descriptionLength < 1 || descriptionLength > 1000 {
 			return fmt.Errorf("`Description` length must be between 1 and 1000 characters")
 		}
+	}
+
+	if r.IsArchived.Set && r.IsArchived.Value == nil {
+		return fmt.Errorf("`IsArchived` can't be null")
 	}
 
 	return nil
@@ -67,6 +72,7 @@ func (h *SpaceHTTPHandler) PatchSpace(w http.ResponseWriter, r *http.Request) {
 		SpaceID:     spaceID,
 		Title:       request.Title.ToDomain(),
 		Description: request.Description.ToDomain(),
+		IsArchived:  request.IsArchived.ToDomain(),
 	}
 	space, err := h.spaceService.PatchSpace(ctx, input)
 	if err != nil {

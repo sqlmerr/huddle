@@ -16,7 +16,7 @@ func (r *SpaceRepositoryImpl) GetSpace(ctx context.Context, spaceID uuid.UUID) (
 	defer cancel()
 
 	query := `
-	SELECT id, title, description, owner_id, created_at
+	SELECT id, title, description, owner_id, created_at, is_archived
 	FROM spaces
 	WHERE id = $1
 	`
@@ -30,6 +30,7 @@ func (r *SpaceRepositoryImpl) GetSpace(ctx context.Context, spaceID uuid.UUID) (
 		&spaceModel.Description,
 		&spaceModel.OwnerID,
 		&spaceModel.CreatedAt,
+		&spaceModel.IsArchived,
 	)
 
 	if err != nil {

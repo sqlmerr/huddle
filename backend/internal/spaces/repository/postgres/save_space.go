@@ -19,12 +19,13 @@ func (r *SpaceRepositoryImpl) SaveSpace(ctx context.Context, space domain.Space)
 	SET
 		title = $2,
 		description = $3,
-		owner_id = $4
+		owner_id = $4,
+		is_archived = $5
 	WHERE id = $1
-	RETURNING id, title, description, owner_id, created_at
+	RETURNING id, title, description, owner_id, created_at, is_archived
 	`
 
-	row := r.pool.QueryRow(ctx, query, space.ID, space.Title, space.Description, space.OwnerID)
+	row := r.pool.QueryRow(ctx, query, space.ID, space.Title, space.Description, space.OwnerID, space.IsArchived)
 
 	var spaceModel SpaceModel
 	err := row.Scan(
@@ -33,6 +34,7 @@ func (r *SpaceRepositoryImpl) SaveSpace(ctx context.Context, space domain.Space)
 		&spaceModel.Description,
 		&spaceModel.OwnerID,
 		&spaceModel.CreatedAt,
+		&spaceModel.IsArchived,
 	)
 
 	if err != nil {

@@ -13,6 +13,7 @@ type SpaceModel struct {
 	Description *string
 	OwnerID     uuid.UUID
 	CreatedAt   time.Time
+	IsArchived  bool
 }
 
 func domainFromModels(models []SpaceModel) []domain.Space {
@@ -30,5 +31,6 @@ func domainFromModel(model SpaceModel) domain.Space {
 		model.Description,
 		model.OwnerID,
 		model.CreatedAt,
+		model.IsArchived,
 	)
 }
