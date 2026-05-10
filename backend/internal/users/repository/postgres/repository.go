@@ -8,7 +8,7 @@ import (
 	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 )
 
-type UsersRepositoryImpl struct {
+type UserRepositoryImpl struct {
 	pool core_postgres_pool.Pool
 }
 
@@ -16,6 +16,6 @@ type UserRepository interface {
 	GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error)
 }
 
-func NewUsersRepository(pool core_postgres_pool.Pool) *UsersRepositoryImpl {
-	return &UsersRepositoryImpl{pool: pool}
+func NewUserRepository(pool core_postgres_pool.Pool) *UserRepositoryImpl {
+	return &UserRepositoryImpl{pool: pool}
 }

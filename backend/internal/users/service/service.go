@@ -12,7 +12,7 @@ type UserServiceImpl struct {
 	repo users_postgres_repository.UserRepository
 }
 
-type UsersService interface {
+type UserService interface {
 	GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error)
 }
 

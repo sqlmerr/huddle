@@ -8,7 +8,7 @@ import (
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 )
 
-func (r *UsersRepositoryImpl) GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error) {
+func (r *UserRepositoryImpl) GetUser(ctx context.Context, userID uuid.UUID) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

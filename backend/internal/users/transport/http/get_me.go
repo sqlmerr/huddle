@@ -19,7 +19,7 @@ type GetMeResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func (h *UsersHTTPHandler) GetMe(w http.ResponseWriter, r *http.Request) {
+func (h *UserHTTPHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(log, w)

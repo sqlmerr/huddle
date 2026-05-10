@@ -15,6 +15,9 @@ import (
 	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 	core_http_middleware "github.com/sqlmerr/huddle/backend/internal/core/transport/http/middleware"
 	core_http_server "github.com/sqlmerr/huddle/backend/internal/core/transport/http/server"
+	spaces_postgres_repository "github.com/sqlmerr/huddle/backend/internal/spaces/repository/postgres"
+	spaces_service "github.com/sqlmerr/huddle/backend/internal/spaces/service"
+	spaces_http_transport "github.com/sqlmerr/huddle/backend/internal/spaces/transport/http"
 	users_postgres_repository "github.com/sqlmerr/huddle/backend/internal/users/repository/postgres"
 	users_service "github.com/sqlmerr/huddle/backend/internal/users/service"
 	users_transport_http "github.com/sqlmerr/huddle/backend/internal/users/transport/http"
@@ -46,15 +49,23 @@ func main() {
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersionV1)
 
-	userRepository := users_postgres_repository.NewUsersRepository(pool)
+	log.Debug("feature initialization", zap.String("feature", "users"))
+	userRepository := users_postgres_repository.NewUserRepository(pool)
 	userService := users_service.NewUserService(userRepository)
-	userTransportHTTP := users_transport_http.NewUsersHTTPHandler(userService, authMiddleware)
+	userTransportHTTP := users_transport_http.NewUserHTTPHandler(userService, authMiddleware)
 	apiVersionRouter.AddRoutes(userTransportHTTP.Routes()...)
 
+	log.Debug("feature initialization", zap.String("feature", "auth"))
 	authRepository := auth_postgres_repository.NewAuthRepository(pool)
 	authService := auth_service.NewAuthService(authRepository, jwtProcessor)
 	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService, authMiddleware)
 	apiVersionRouter.AddRoutes(authTransportHTTP.Routes()...)
+
+	log.Debug("feature initialization", zap.String("feature", "spaces"))
+	spaceRepository := spaces_postgres_repository.NewSpaceRepository(pool)
+	spaceService := spaces_service.NewSpaceService(spaceRepository)
+	spaceTransportHTTP := spaces_http_transport.NewSpaceHTTPHandler(spaceService, authMiddleware)
+	apiVersionRouter.AddRoutes(spaceTransportHTTP.Routes()...)
 
 	httpServer := core_http_server.NewHttpServer(
 		*core_http_server.LoadConfigMust(),
