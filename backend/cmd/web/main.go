@@ -53,27 +53,28 @@ func main() {
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersionV1)
 
-	log.Debug("feature initialization", zap.String("feature", "users"))
 	userRepository := users_postgres_repository.NewUserRepository(pool)
+	authRepository := auth_postgres_repository.NewAuthRepository(pool)
+	spaceRepository := spaces_postgres_repository.NewSpaceRepository(pool)
+	boardRepository := boards_postgres_repository.NewBoardRepository(pool)
+	accessService := core_access.NewAccessService(spaceRepository, boardRepository)
+
+	log.Debug("feature initialization", zap.String("feature", "users"))
 	userService := users_service.NewUserService(userRepository)
 	userTransportHTTP := users_transport_http.NewUserHTTPHandler(userService, authMiddleware)
 	apiVersionRouter.AddRoutes(userTransportHTTP.Routes()...)
 
 	log.Debug("feature initialization", zap.String("feature", "auth"))
-	authRepository := auth_postgres_repository.NewAuthRepository(pool)
 	authService := auth_service.NewAuthService(authRepository, jwtProcessor)
 	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService, authMiddleware)
 	apiVersionRouter.AddRoutes(authTransportHTTP.Routes()...)
 
 	log.Debug("feature initialization", zap.String("feature", "spaces"))
-	spaceRepository := spaces_postgres_repository.NewSpaceRepository(pool)
-	spaceService := spaces_service.NewSpaceService(spaceRepository)
+	spaceService := spaces_service.NewSpaceService(spaceRepository, accessService)
 	spaceTransportHTTP := spaces_http_transport.NewSpaceHTTPHandler(spaceService, authMiddleware)
 	apiVersionRouter.AddRoutes(spaceTransportHTTP.Routes()...)
 
 	log.Debug("feature initialization", zap.String("feature", "boards"))
-	boardRepository := boards_postgres_repository.NewBoardRepository(pool)
-	accessService := core_access.NewAccessService(spaceRepository, boardRepository)
 	boardService := boards_service.NewBoardService(boardRepository, accessService)
 	boardTransportHTTP := boards_http_transport.NewBoardsHTTPHandler(boardService, authMiddleware)
 	apiVersionRouter.AddRoutes(boardTransportHTTP.Routes()...)

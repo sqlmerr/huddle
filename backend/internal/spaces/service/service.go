@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	core_access "github.com/sqlmerr/huddle/backend/internal/core/access"
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
 	spaces_postgres_repository "github.com/sqlmerr/huddle/backend/internal/spaces/repository/postgres"
 )
@@ -17,9 +18,13 @@ type SpaceService interface {
 }
 
 type SpaceServiceImpl struct {
-	repo spaces_postgres_repository.SpaceRepository
+	repo          spaces_postgres_repository.SpaceRepository
+	accessService core_access.AccessService
 }
 
-func NewSpaceService(repo spaces_postgres_repository.SpaceRepository) *SpaceServiceImpl {
-	return &SpaceServiceImpl{repo}
+func NewSpaceService(
+	repo spaces_postgres_repository.SpaceRepository,
+	accessService core_access.AccessService,
+) *SpaceServiceImpl {
+	return &SpaceServiceImpl{repo, accessService}
 }

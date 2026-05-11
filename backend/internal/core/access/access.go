@@ -8,7 +8,8 @@ import (
 )
 
 type AccessService interface {
-	CanAccessSpace(ctx context.Context, userID, spaceID uuid.UUID) error
+	CanAccessSpaceByID(ctx context.Context, userID, spaceID uuid.UUID) error
+	CanAccessSpace(ctx context.Context, userID uuid.UUID, space domain.Space) error
 	CanAccessBoardByID(ctx context.Context, userID, boardID uuid.UUID) error
 	CanAccessBoard(ctx context.Context, userID uuid.UUID, board domain.Board) error
 	// CanAccessList(ctx context.Context, userID, listID uuid.UUID) error

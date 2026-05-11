@@ -9,7 +9,7 @@ import (
 )
 
 func (s *BoardServiceImpl) CreateBoard(ctx context.Context, userID uuid.UUID, input CreateBoardInput) (domain.Board, error) {
-	if err := s.accessService.CanAccessSpace(ctx, userID, input.SpaceID); err != nil {
+	if err := s.accessService.CanAccessSpaceByID(ctx, userID, input.SpaceID); err != nil {
 		return domain.Board{}, fmt.Errorf("access denied: %w", err)
 	}
 

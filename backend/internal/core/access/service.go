@@ -21,7 +21,20 @@ func NewAccessService(spaceRepo SpaceRepository, boardRepo BoardRepository) *Acc
 	}
 }
 
-func (s *AccessServiceImpl) CanAccessSpace(ctx context.Context, userID, spaceID uuid.UUID) error {
+func (s *AccessServiceImpl) CanAccessSpace(ctx context.Context, userID uuid.UUID, space domain.Space) error {
+	// TODO: permissions and space members
+	if space.OwnerID != userID {
+		return fmt.Errorf(
+			"space with id='%s': %w",
+			space.ID,
+			core_errors.ErrAccessDenied,
+		)
+	}
+
+	return nil
+}
+
+func (s *AccessServiceImpl) CanAccessSpaceByID(ctx context.Context, userID, spaceID uuid.UUID) error {
 	space, err := s.spaceRepository.GetSpace(ctx, spaceID)
 	if err != nil {
 		return fmt.Errorf(
@@ -30,16 +43,8 @@ func (s *AccessServiceImpl) CanAccessSpace(ctx context.Context, userID, spaceID 
 			core_errors.ErrNotFound,
 		)
 	}
-	// TODO: permissions and space members
-	if space.OwnerID != userID {
-		return fmt.Errorf(
-			"space with id='%s': %w",
-			spaceID,
-			core_errors.ErrAccessDenied,
-		)
-	}
 
-	return nil
+	return s.CanAccessSpace(ctx, userID, space)
 }
 
 func (s *AccessServiceImpl) CanAccessBoardByID(ctx context.Context, userID, boardID uuid.UUID) error {
@@ -52,9 +57,9 @@ func (s *AccessServiceImpl) CanAccessBoardByID(ctx context.Context, userID, boar
 		)
 	}
 
-	return s.CanAccessSpace(ctx, userID, board.SpaceID)
+	return s.CanAccessSpaceByID(ctx, userID, board.SpaceID)
 }
 
 func (s *AccessServiceImpl) CanAccessBoard(ctx context.Context, userID uuid.UUID, board domain.Board) error {
-	return s.CanAccessSpace(ctx, userID, board.SpaceID)
+	return s.CanAccessSpaceByID(ctx, userID, board.SpaceID)
 }
