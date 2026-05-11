@@ -1,0 +1,6 @@
+CREATE TABLE boards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(50) NOT NULL CHECK(char_length(title) BETWEEN 1 AND 50),
+    space_id UUID NOT NULL REFERENCES spaces(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

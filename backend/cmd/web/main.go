@@ -10,6 +10,10 @@ import (
 	auth_postgres_repository "github.com/sqlmerr/huddle/backend/internal/auth/repository/postgres"
 	auth_service "github.com/sqlmerr/huddle/backend/internal/auth/service"
 	auth_transport_http "github.com/sqlmerr/huddle/backend/internal/auth/transport/http"
+	boards_postgres_repository "github.com/sqlmerr/huddle/backend/internal/boards/repository/postgres"
+	boards_service "github.com/sqlmerr/huddle/backend/internal/boards/service"
+	boards_http_transport "github.com/sqlmerr/huddle/backend/internal/boards/transport/http"
+	core_access "github.com/sqlmerr/huddle/backend/internal/core/access"
 	core_auth "github.com/sqlmerr/huddle/backend/internal/core/auth"
 	"github.com/sqlmerr/huddle/backend/internal/core/logger"
 	core_pgx_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool/pgx"
@@ -66,6 +70,13 @@ func main() {
 	spaceService := spaces_service.NewSpaceService(spaceRepository)
 	spaceTransportHTTP := spaces_http_transport.NewSpaceHTTPHandler(spaceService, authMiddleware)
 	apiVersionRouter.AddRoutes(spaceTransportHTTP.Routes()...)
+
+	log.Debug("feature initialization", zap.String("feature", "boards"))
+	boardRepository := boards_postgres_repository.NewBoardRepository(pool)
+	accessService := core_access.NewAccessService(spaceRepository, boardRepository)
+	boardService := boards_service.NewBoardService(boardRepository, accessService)
+	boardTransportHTTP := boards_http_transport.NewBoardsHTTPHandler(boardService, authMiddleware)
+	apiVersionRouter.AddRoutes(boardTransportHTTP.Routes()...)
 
 	httpServer := core_http_server.NewHttpServer(
 		*core_http_server.LoadConfigMust(),
