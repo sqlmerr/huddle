@@ -2,9 +2,12 @@ package spaces_postgres_repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
+	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
+	core_postgres_pool "github.com/sqlmerr/huddle/backend/internal/core/repository/postgres/pool"
 )
 
 func (r *SpaceRepositoryImpl) CreateSpace(ctx context.Context, space domain.Space) (domain.Space, error) {
@@ -28,7 +31,13 @@ func (r *SpaceRepositoryImpl) CreateSpace(ctx context.Context, space domain.Spac
 	)
 
 	if err != nil {
-		// TODO: handle violates foreign key error
+		if errors.Is(err, core_postgres_pool.ErrViolatesForeignKey) {
+			return domain.Space{}, fmt.Errorf(
+				"user with id='%s': %w",
+				space.OwnerID,
+				core_errors.ErrNotFound,
+			)
+		}
 		return domain.Space{}, fmt.Errorf("scan error: %w", err)
 	}
 
