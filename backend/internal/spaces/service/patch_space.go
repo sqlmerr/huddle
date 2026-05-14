@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/sqlmerr/huddle/backend/internal/core/domain"
-	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
 )
 
 func (s *SpaceServiceImpl) PatchSpace(ctx context.Context, input PatchSpaceInput) (domain.Space, error) {
@@ -14,8 +13,8 @@ func (s *SpaceServiceImpl) PatchSpace(ctx context.Context, input PatchSpaceInput
 		return domain.Space{}, fmt.Errorf("get space: %w", err)
 	}
 
-	if space.OwnerID != input.UserID { // TODO: space members
-		return domain.Space{}, fmt.Errorf("unable to access the space with id='%s': %w", input.SpaceID.String(), core_errors.ErrAccessDenied)
+	if err := s.accessService.CanAccessSpace(ctx, input.UserID, space); err != nil {
+		return domain.Space{}, fmt.Errorf("unable to access the space: %w", err)
 	}
 
 	patchedSpace, err := input.ApplyPatch(space)

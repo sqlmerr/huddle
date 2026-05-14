@@ -1,0 +1,7 @@
+CREATE TABLE lists (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(50) NOT NULL CHECK(char_length(title) BETWEEN 1 AND 50),
+    board_id UUID NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

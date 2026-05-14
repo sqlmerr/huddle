@@ -12,12 +12,14 @@ import (
 type AccessServiceImpl struct {
 	spaceRepository SpaceRepository
 	boardRepository BoardRepository
+	listRepository  ListRepository
 }
 
-func NewAccessService(spaceRepo SpaceRepository, boardRepo BoardRepository) *AccessServiceImpl {
+func NewAccessService(spaceRepo SpaceRepository, boardRepo BoardRepository, listRepo ListRepository) *AccessServiceImpl {
 	return &AccessServiceImpl{
 		spaceRepository: spaceRepo,
 		boardRepository: boardRepo,
+		listRepository:  listRepo,
 	}
 }
 
@@ -40,7 +42,7 @@ func (s *AccessServiceImpl) CanAccessSpaceByID(ctx context.Context, userID, spac
 		return fmt.Errorf(
 			"space with id='%s': %w",
 			spaceID,
-			core_errors.ErrNotFound,
+			err,
 		)
 	}
 
@@ -53,7 +55,7 @@ func (s *AccessServiceImpl) CanAccessBoardByID(ctx context.Context, userID, boar
 		return fmt.Errorf(
 			"board with id='%s': %w",
 			boardID,
-			core_errors.ErrNotFound,
+			err,
 		)
 	}
 
@@ -62,4 +64,20 @@ func (s *AccessServiceImpl) CanAccessBoardByID(ctx context.Context, userID, boar
 
 func (s *AccessServiceImpl) CanAccessBoard(ctx context.Context, userID uuid.UUID, board domain.Board) error {
 	return s.CanAccessSpaceByID(ctx, userID, board.SpaceID)
+}
+
+func (s *AccessServiceImpl) CanAccessList(ctx context.Context, userID uuid.UUID, list domain.List) error {
+	return s.CanAccessBoardByID(ctx, userID, list.BoardID)
+}
+
+func (s *AccessServiceImpl) CanAccessListByID(ctx context.Context, userID, listID uuid.UUID) error {
+	list, err := s.listRepository.GetList(ctx, listID)
+	if err != nil {
+		return fmt.Errorf(
+			"list with id='%s': %w",
+			listID,
+			err,
+		)
+	}
+	return s.CanAccessList(ctx, userID, list)
 }
