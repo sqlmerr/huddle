@@ -54,5 +54,11 @@ func (h *ListHTTPHandler) Routes() []core_http_server.Route {
 			Handler:    h.DeleteList,
 			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
 		},
+		{
+			Method:     http.MethodPatch,
+			Path:       "/boards/{id}/lists/reorder",
+			Handler:    h.ReorderLists,
+			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
+		},
 	}
 }

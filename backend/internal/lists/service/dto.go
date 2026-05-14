@@ -12,6 +12,11 @@ type CreateListInput struct {
 	BoardID uuid.UUID
 }
 
+type ReorderListsInput struct {
+	BoardID uuid.UUID
+	Order   []uuid.UUID
+}
+
 type PatchListInput struct {
 	ListID uuid.UUID
 	Title  domain.Nullable[string]

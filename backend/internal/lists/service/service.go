@@ -15,8 +15,7 @@ type ListService interface {
 	GetBoardLists(ctx context.Context, userID uuid.UUID, boardID uuid.UUID) ([]domain.List, error)
 	PatchList(ctx context.Context, userID uuid.UUID, input PatchListInput) (domain.List, error)
 	DeleteList(ctx context.Context, userID uuid.UUID, listID uuid.UUID) error
-
-	// TODO: ChangeListOrder
+	ReorderLists(ctx context.Context, userID uuid.UUID, input ReorderListsInput) error
 }
 
 type ListServiceImpl struct {
