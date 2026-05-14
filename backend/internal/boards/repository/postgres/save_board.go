@@ -35,7 +35,7 @@ func (r *BoardRepositoryImpl) SaveBoard(ctx context.Context, board domain.Board)
 
 	if err != nil {
 		if errors.Is(err, core_postgres_pool.ErrNoRows) {
-			return domain.Board{}, fmt.Errorf("boards with id='%s': %w", board.ID, core_errors.ErrNotFound)
+			return domain.Board{}, fmt.Errorf("board with id='%s': %w", board.ID, core_errors.ErrNotFound)
 		}
 		return domain.Board{}, fmt.Errorf("scan error: %w", err)
 	}
