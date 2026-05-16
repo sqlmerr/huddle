@@ -15,6 +15,11 @@ type CreateTaskInput struct {
 	Status      string
 }
 
+type ReorderTasksInput struct {
+	ListID uuid.UUID
+	Order  []uuid.UUID
+}
+
 type PatchTaskInput struct {
 	TaskID uuid.UUID
 

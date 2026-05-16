@@ -55,5 +55,11 @@ func (h *TaskHTTPHandler) Routes() []core_http_server.Route {
 			Handler:    h.DeleteTask,
 			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
 		},
+		{
+			Method:     http.MethodPatch,
+			Path:       "/lists/{id}/tasks/reorder",
+			Handler:    h.ReorderTasks,
+			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
+		},
 	}
 }
