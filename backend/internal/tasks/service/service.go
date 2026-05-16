@@ -16,8 +16,7 @@ type TaskService interface {
 	PatchTask(ctx context.Context, userID uuid.UUID, input PatchTaskInput) (domain.Task, error)
 	DeleteTask(ctx context.Context, userID uuid.UUID, taskID uuid.UUID) error
 	ReorderTasks(ctx context.Context, userID uuid.UUID, input ReorderTasksInput) error
-
-	// TODO: move task to a different task list
+	MoveTask(ctx context.Context, userID uuid.UUID, input MoveTaskInput) (domain.Task, error)
 }
 
 type TaskServiceImpl struct {

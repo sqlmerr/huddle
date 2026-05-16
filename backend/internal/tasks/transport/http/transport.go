@@ -61,5 +61,11 @@ func (h *TaskHTTPHandler) Routes() []core_http_server.Route {
 			Handler:    h.ReorderTasks,
 			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
 		},
+		{
+			Method:     http.MethodPatch,
+			Path:       "/tasks/{id}/move",
+			Handler:    h.MoveTask,
+			Middleware: []core_http_middleware.Middleware{h.authMiddleware},
+		},
 	}
 }

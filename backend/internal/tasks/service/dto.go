@@ -20,6 +20,12 @@ type ReorderTasksInput struct {
 	Order  []uuid.UUID
 }
 
+type MoveTaskInput struct {
+	TaskID   uuid.UUID
+	ListID   uuid.UUID
+	Position *int
+}
+
 type PatchTaskInput struct {
 	TaskID uuid.UUID
 
