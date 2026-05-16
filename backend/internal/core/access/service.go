@@ -13,13 +13,20 @@ type AccessServiceImpl struct {
 	spaceRepository SpaceRepository
 	boardRepository BoardRepository
 	listRepository  ListRepository
+	taskRepository  TaskRepository
 }
 
-func NewAccessService(spaceRepo SpaceRepository, boardRepo BoardRepository, listRepo ListRepository) *AccessServiceImpl {
+func NewAccessService(
+	spaceRepo SpaceRepository,
+	boardRepo BoardRepository,
+	listRepo ListRepository,
+	taskRepo TaskRepository,
+) *AccessServiceImpl {
 	return &AccessServiceImpl{
 		spaceRepository: spaceRepo,
 		boardRepository: boardRepo,
 		listRepository:  listRepo,
+		taskRepository:  taskRepo,
 	}
 }
 
@@ -80,4 +87,19 @@ func (s *AccessServiceImpl) CanAccessListByID(ctx context.Context, userID, listI
 		)
 	}
 	return s.CanAccessList(ctx, userID, list)
+}
+
+func (s *AccessServiceImpl) CanAccessTask(ctx context.Context, userID uuid.UUID, task domain.Task) error {
+	return s.CanAccessListByID(ctx, userID, task.ListID)
+}
+func (s *AccessServiceImpl) CanAccessTaskByID(ctx context.Context, userID, taskID uuid.UUID) error {
+	task, err := s.taskRepository.GetTask(ctx, taskID)
+	if err != nil {
+		return fmt.Errorf(
+			"task with id='%s': %w",
+			taskID,
+			err,
+		)
+	}
+	return s.CanAccessTask(ctx, userID, task)
 }

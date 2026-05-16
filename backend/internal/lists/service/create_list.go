@@ -24,11 +24,9 @@ func (s *ListServiceImpl) CreateList(ctx context.Context, userID uuid.UUID, inpu
 
 	var position int
 	if len(lists) != 0 {
-		fmt.Println("sisi")
 		lastList := lists[len(lists)-1]
 		position = lastList.Position + 1
 	}
-	fmt.Println(position)
 
 	list := domain.NewListUninitialized(input.Title, input.BoardID, position)
 	if err := list.Validate(); err != nil {
