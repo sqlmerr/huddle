@@ -20,12 +20,19 @@ func (s *ListServiceImpl) ReorderLists(ctx context.Context, userID uuid.UUID, in
 		return fmt.Errorf("get board lists: %w", err)
 	}
 
+	if len(input.Order) != len(lists) {
+		return fmt.Errorf(
+			"`Order` must contain ALL list ids ONLY for this board: %w",
+			core_errors.ErrInvalidArgument,
+		)
+	}
+
 	newLists := make([]domain.List, len(lists))
 
 	for i, list := range lists {
 		if !slices.Contains(input.Order, list.ID) {
 			return fmt.Errorf(
-				"`Order` must contain all list ids for this board: %w",
+				"`Order` must contain ALL list ids for this board: %w",
 				core_errors.ErrInvalidArgument,
 			)
 		}

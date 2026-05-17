@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	core_errors "github.com/sqlmerr/huddle/backend/internal/core/errors"
 )
 
 type List struct {
@@ -48,7 +49,7 @@ func NewListUninitialized(
 func (l *List) Validate() error {
 	titleLen := len([]rune(l.Title))
 	if titleLen == 0 || titleLen > 50 {
-		return fmt.Errorf("`Title` length must be between 1 and 50 characters")
+		return fmt.Errorf("`Title` length must be between 1 and 50 characters: %w", core_errors.ErrInvalidArgument)
 	}
 
 	return nil

@@ -25,6 +25,9 @@ import (
 	spaces_postgres_repository "github.com/sqlmerr/huddle/backend/internal/spaces/repository/postgres"
 	spaces_service "github.com/sqlmerr/huddle/backend/internal/spaces/service"
 	spaces_http_transport "github.com/sqlmerr/huddle/backend/internal/spaces/transport/http"
+	tasks_postgres_repository "github.com/sqlmerr/huddle/backend/internal/tasks/repository/postgres"
+	tasks_service "github.com/sqlmerr/huddle/backend/internal/tasks/service"
+	tasks_http_transport "github.com/sqlmerr/huddle/backend/internal/tasks/transport/http"
 	users_postgres_repository "github.com/sqlmerr/huddle/backend/internal/users/repository/postgres"
 	users_service "github.com/sqlmerr/huddle/backend/internal/users/service"
 	users_transport_http "github.com/sqlmerr/huddle/backend/internal/users/transport/http"
@@ -61,7 +64,8 @@ func main() {
 	spaceRepository := spaces_postgres_repository.NewSpaceRepository(pool)
 	boardRepository := boards_postgres_repository.NewBoardRepository(pool)
 	listRepository := lists_postgres_repository.NewListRepository(pool)
-	accessService := core_access.NewAccessService(spaceRepository, boardRepository, listRepository)
+	taskRepository := tasks_postgres_repository.NewTaskRepository(pool)
+	accessService := core_access.NewAccessService(spaceRepository, boardRepository, listRepository, taskRepository)
 
 	log.Debug("feature initialization", zap.String("feature", "users"))
 	userService := users_service.NewUserService(userRepository)
@@ -87,6 +91,11 @@ func main() {
 	listService := lists_service.NewListService(listRepository, accessService)
 	listTransportHTTP := lists_http_transport.NewListHTTPHandler(listService, authMiddleware)
 	apiVersionRouter.AddRoutes(listTransportHTTP.Routes()...)
+
+	log.Debug("feature initialization", zap.String("feature", "tasks"))
+	taskService := tasks_service.NewTaskService(taskRepository, accessService)
+	taskTransportHTTP := tasks_http_transport.NewTaskHTTPHandler(taskService, authMiddleware)
+	apiVersionRouter.AddRoutes(taskTransportHTTP.Routes()...)
 
 	httpServer := core_http_server.NewHttpServer(
 		*core_http_server.LoadConfigMust(),
