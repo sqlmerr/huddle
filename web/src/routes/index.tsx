@@ -17,7 +17,7 @@ function LandingPage() {
         <HuddleLogo size="md" />
         <Button
           variant="outline"
-          render={<Link to="/">Login</Link>}
+          render={<Link to="/login">Login</Link>}
           nativeButton={false}
         />
         {/* <ModeToggle /> */}
@@ -46,7 +46,7 @@ function LandingPage() {
             nativeButton={false}
             render={
               // Register
-              <Link to="/">
+              <Link to="/register">
                 Get started free
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
@@ -56,8 +56,7 @@ function LandingPage() {
           <Button
             variant="outline"
             size="lg"
-            // /Login
-            render={<Link to="/">Sign in to your workspace</Link>}
+            render={<Link to="/login">Sign in to your workspace</Link>}
             nativeButton={false}
           />
         </div>

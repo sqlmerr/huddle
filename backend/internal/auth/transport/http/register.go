@@ -46,9 +46,10 @@ func (h *AuthHTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	log.Debug("registered new user", zap.String("user_id", user.ID.String()))
 	responseHandler.JSONResponse(http.StatusCreated, CreateUserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
 	})
 }
 

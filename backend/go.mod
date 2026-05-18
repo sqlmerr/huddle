@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/rs/cors v1.11.1
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.49.0
 )
