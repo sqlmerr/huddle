@@ -1,4 +1,4 @@
-import type z from 'zod'
+import z from 'zod'
 import {
   loginResponseSchema,
   errorSchema,
@@ -9,6 +9,13 @@ import {
   type RegisterRequest,
   type RegisterResponse,
   registerResponseSchema,
+  type GetMySpacesResponse,
+  getMySpacesResponseSchema,
+  type CreateSpaceRequest,
+  type CreateSpaceResponse,
+  createSpaceResponseSchema,
+  type GetMeResponse,
+  getMeResponseSchema,
 } from './schemas'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
@@ -76,7 +83,6 @@ export async function apiFetch<T>(
       const errorData = errorSchema.parse(toCamelCase(errorJson))
       throw new ApiError(errorData.error, errorData.message, res.status)
     } catch (error) {
-      // Если не удалось распарсить JSON или это не наш формат ошибки
       if (error instanceof ApiError) {
         throw error
       }
@@ -104,6 +110,34 @@ export async function register(
   data: RegisterRequest,
 ): Promise<RegisterResponse> {
   return await apiFetch('/api/v1/auth/register', registerResponseSchema, {
+    method: 'POST',
+    body: JSON.stringify(toSnakeCase(data as Record<string, unknown>)),
+  })
+}
+
+export async function getMe(): Promise<GetMeResponse> {
+  return await apiFetch('/api/v1/users/me', getMeResponseSchema, {
+    method: 'GET',
+  })
+}
+
+export async function getMySpaces(): Promise<GetMySpacesResponse> {
+  const response = await apiFetch(
+    '/api/v1/spaces/my',
+    getMySpacesResponseSchema,
+    {
+      method: 'GET',
+    },
+  )
+
+  console.log('r', response)
+  return response
+}
+
+export async function createSpace(
+  data: CreateSpaceRequest,
+): Promise<CreateSpaceResponse> {
+  return await apiFetch('/api/v1/spaces', createSpaceResponseSchema, {
     method: 'POST',
     body: JSON.stringify(toSnakeCase(data as Record<string, unknown>)),
   })

@@ -1,16 +1,14 @@
+import { getMe } from '#/lib/api'
+import type { User } from '#/lib/schemas'
+import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
-
-interface User {
-  id: string
-  username: string
-  email: string
-}
 
 interface AuthContextType {
   user: User | null
   token: string | null
   isLoading: boolean
+  isAuthorized: boolean
   login: (token: string) => void
   logout: () => void
 }
@@ -21,22 +19,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthorized, setIsAuthorized] = useState(false)
+
+  const query = useQuery({ queryKey: ['me'], queryFn: getMe, enabled: false })
 
   useEffect(() => {
-    // Check for existing session on mount
     const storedToken = localStorage.getItem('token')
     if (storedToken) {
       setToken(storedToken)
-      // In a real app, we'd validate the token with the backend
-      // setUser(mockUser)
+      setIsAuthorized(true)
+      query.refetch()
     }
     setIsLoading(false)
   }, [])
 
+  useEffect(() => {
+    if (query.isSuccess) {
+      setUser(query.data)
+    }
+  }, [query.isSuccess, query.data])
+
   const login = (newToken: string) => {
     localStorage.setItem('token', newToken)
+
+    const token = localStorage.getItem('token')
     setToken(newToken)
-    // setUser(newUser)
+    query.refetch()
+    setIsAuthorized(true)
   }
 
   const logout = () => {
@@ -46,7 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, isLoading, login, logout, isAuthorized }}
+    >
       {children}
     </AuthContext.Provider>
   )

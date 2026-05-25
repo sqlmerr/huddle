@@ -32,7 +32,8 @@ function LoginPage() {
     onSuccess: (data) => {
       authLogin(data.accessToken)
       toast.success('Welcome back!')
-      navigate({ to: '/' }) // TODO: /dashboard
+
+      navigate({ to: '/dashboard' })
     },
     onError: (error) => {
       console.log(error)
