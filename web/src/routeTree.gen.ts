@@ -13,7 +13,9 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SpacesSpaceIdRouteImport } from './routes/spaces/$spaceId'
+import { Route as SpacesSpaceIdRouteRouteImport } from './routes/spaces/$spaceId/route'
+import { Route as SpacesSpaceIdIndexRouteImport } from './routes/spaces/$spaceId/index'
+import { Route as SpacesSpaceIdBoardsBoardIdRouteImport } from './routes/spaces/$spaceId/boards/$boardId'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -35,25 +37,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SpacesSpaceIdRoute = SpacesSpaceIdRouteImport.update({
+const SpacesSpaceIdRouteRoute = SpacesSpaceIdRouteRouteImport.update({
   id: '/spaces/$spaceId',
   path: '/spaces/$spaceId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpacesSpaceIdIndexRoute = SpacesSpaceIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SpacesSpaceIdRouteRoute,
+} as any)
+const SpacesSpaceIdBoardsBoardIdRoute =
+  SpacesSpaceIdBoardsBoardIdRouteImport.update({
+    id: '/boards/$boardId',
+    path: '/boards/$boardId',
+    getParentRoute: () => SpacesSpaceIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/spaces/$spaceId': typeof SpacesSpaceIdRoute
+  '/spaces/$spaceId': typeof SpacesSpaceIdRouteRouteWithChildren
+  '/spaces/$spaceId/': typeof SpacesSpaceIdIndexRoute
+  '/spaces/$spaceId/boards/$boardId': typeof SpacesSpaceIdBoardsBoardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/spaces/$spaceId': typeof SpacesSpaceIdRoute
+  '/spaces/$spaceId': typeof SpacesSpaceIdIndexRoute
+  '/spaces/$spaceId/boards/$boardId': typeof SpacesSpaceIdBoardsBoardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,13 +77,28 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/spaces/$spaceId': typeof SpacesSpaceIdRoute
+  '/spaces/$spaceId': typeof SpacesSpaceIdRouteRouteWithChildren
+  '/spaces/$spaceId/': typeof SpacesSpaceIdIndexRoute
+  '/spaces/$spaceId/boards/$boardId': typeof SpacesSpaceIdBoardsBoardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/register' | '/spaces/$spaceId'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/register'
+    | '/spaces/$spaceId'
+    | '/spaces/$spaceId/'
+    | '/spaces/$spaceId/boards/$boardId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/register' | '/spaces/$spaceId'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/login'
+    | '/register'
+    | '/spaces/$spaceId'
+    | '/spaces/$spaceId/boards/$boardId'
   id:
     | '__root__'
     | '/'
@@ -75,6 +106,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/spaces/$spaceId'
+    | '/spaces/$spaceId/'
+    | '/spaces/$spaceId/boards/$boardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -82,7 +115,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  SpacesSpaceIdRoute: typeof SpacesSpaceIdRoute
+  SpacesSpaceIdRouteRoute: typeof SpacesSpaceIdRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -119,18 +152,45 @@ declare module '@tanstack/react-router' {
       id: '/spaces/$spaceId'
       path: '/spaces/$spaceId'
       fullPath: '/spaces/$spaceId'
-      preLoaderRoute: typeof SpacesSpaceIdRouteImport
+      preLoaderRoute: typeof SpacesSpaceIdRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/spaces/$spaceId/': {
+      id: '/spaces/$spaceId/'
+      path: '/'
+      fullPath: '/spaces/$spaceId/'
+      preLoaderRoute: typeof SpacesSpaceIdIndexRouteImport
+      parentRoute: typeof SpacesSpaceIdRouteRoute
+    }
+    '/spaces/$spaceId/boards/$boardId': {
+      id: '/spaces/$spaceId/boards/$boardId'
+      path: '/boards/$boardId'
+      fullPath: '/spaces/$spaceId/boards/$boardId'
+      preLoaderRoute: typeof SpacesSpaceIdBoardsBoardIdRouteImport
+      parentRoute: typeof SpacesSpaceIdRouteRoute
     }
   }
 }
+
+interface SpacesSpaceIdRouteRouteChildren {
+  SpacesSpaceIdIndexRoute: typeof SpacesSpaceIdIndexRoute
+  SpacesSpaceIdBoardsBoardIdRoute: typeof SpacesSpaceIdBoardsBoardIdRoute
+}
+
+const SpacesSpaceIdRouteRouteChildren: SpacesSpaceIdRouteRouteChildren = {
+  SpacesSpaceIdIndexRoute: SpacesSpaceIdIndexRoute,
+  SpacesSpaceIdBoardsBoardIdRoute: SpacesSpaceIdBoardsBoardIdRoute,
+}
+
+const SpacesSpaceIdRouteRouteWithChildren =
+  SpacesSpaceIdRouteRoute._addFileChildren(SpacesSpaceIdRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  SpacesSpaceIdRoute: SpacesSpaceIdRoute,
+  SpacesSpaceIdRouteRoute: SpacesSpaceIdRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -16,6 +16,13 @@ import {
   createSpaceResponseSchema,
   type GetMeResponse,
   getMeResponseSchema,
+  type GetSpaceResponse,
+  getSpaceResponseSchema,
+  type GetSpaceBoardsResponse,
+  getSpaceBoardsResponseSchema,
+  type CreateBoardRequest,
+  type CreateBoardResponse,
+  createBoardResponseSchema,
 } from './schemas'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
@@ -138,6 +145,33 @@ export async function createSpace(
   data: CreateSpaceRequest,
 ): Promise<CreateSpaceResponse> {
   return await apiFetch('/api/v1/spaces', createSpaceResponseSchema, {
+    method: 'POST',
+    body: JSON.stringify(toSnakeCase(data as Record<string, unknown>)),
+  })
+}
+
+export async function getSpace(spaceId: string): Promise<GetSpaceResponse> {
+  return await apiFetch(`/api/v1/spaces/${spaceId}`, getSpaceResponseSchema, {
+    method: 'GET',
+  })
+}
+
+export async function getSpaceBoards(
+  spaceId: string,
+): Promise<GetSpaceBoardsResponse> {
+  return await apiFetch(
+    `/api/v1/spaces/${spaceId}/boards`,
+    getSpaceBoardsResponseSchema,
+    {
+      method: 'GET',
+    },
+  )
+}
+
+export async function createBoard(
+  data: CreateBoardRequest,
+): Promise<CreateBoardResponse> {
+  return await apiFetch('/api/v1/boards', createBoardResponseSchema, {
     method: 'POST',
     body: JSON.stringify(toSnakeCase(data as Record<string, unknown>)),
   })

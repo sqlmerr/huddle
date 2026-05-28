@@ -33,7 +33,6 @@ function RouteComponent() {
     return null
   }
 
-  console.log(query.data)
   return (
     <div className="min-h-screen bg-background">
       <Header />

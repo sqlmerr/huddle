@@ -6,8 +6,8 @@ export const errorSchema = z.object({
 })
 
 export const loginRequestSchema = z.object({
-  username: z.string().min(3).max(32).optional(),
-  email: z.email().optional(),
+  username: z.string().min(3).max(32).nullable(),
+  email: z.email().nullable(),
   password: z.string().min(1),
 })
 
@@ -36,7 +36,7 @@ export const getMeResponseSchema = userSchema
 export const spaceSchema = z.object({
   id: z.uuid(),
   title: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   ownerId: z.uuid(),
   createdAt: z.coerce.date(),
   isArchived: z.boolean(),
@@ -53,6 +53,26 @@ export const createSpaceRequestSchema = z.object({
 
 export const createSpaceResponseSchema = spaceSchema
 
+export const getSpaceResponseSchema = spaceSchema
+
+export const boardSchema = z.object({
+  id: z.uuid(),
+  title: z.string(),
+  spaceId: z.uuid(),
+  createdAt: z.coerce.date(),
+})
+
+export const getSpaceBoardsResponseSchema = z.object({
+  data: boardSchema.array(),
+})
+
+export const createBoardRequestSchema = z.object({
+  title: z.string().min(1).max(50),
+  spaceId: z.uuid(),
+})
+
+export const createBoardResponseSchema = boardSchema
+
 export type ErrorResponse = z.infer<typeof errorSchema>
 
 // Auth
@@ -66,6 +86,15 @@ export type GetMeResponse = z.infer<typeof getMeResponseSchema>
 export type GetMySpacesResponse = z.infer<typeof getMySpacesResponseSchema>
 export type CreateSpaceRequest = z.infer<typeof createSpaceRequestSchema>
 export type CreateSpaceResponse = z.infer<typeof createSpaceResponseSchema>
+export type GetSpaceResponse = z.infer<typeof getSpaceResponseSchema>
+
+// Boards
+export type GetSpaceBoardsResponse = z.infer<
+  typeof getSpaceBoardsResponseSchema
+>
+export type CreateBoardRequest = z.infer<typeof createBoardRequestSchema>
+export type CreateBoardResponse = z.infer<typeof createBoardResponseSchema>
 
 export type User = z.infer<typeof userSchema>
 export type Space = z.infer<typeof spaceSchema>
+export type Board = z.infer<typeof boardSchema>
